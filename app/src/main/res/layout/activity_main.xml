@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Spinner
+        android:id="@+id/plantSpinner"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_a_plant"
+        android:layout_alignTop="@+id/plantSpinner"
+        android:layout_toStartOf="@+id/plantSpinner"/>
+
+    <Spinner
+        android:id="@+id/stageSpinner"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/plantSpinner"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Growth stage:"
+        android:layout_alignTop="@+id/stageSpinner"
+        android:layout_toStartOf="@+id/stageSpinner"/>
+
+    <Spinner
+        android:id="@+id/potSpinner"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/stageSpinner"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pot:"
+        android:layout_alignTop="@+id/potSpinner"
+        android:layout_toStartOf="@+id/potSpinner"/>
+
+    <Button
+        android:id="@+id/addBtn"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:text="Add plant"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/potSpinner"
+        android:layout_marginTop="20dp"/>
+    <Button
+        android:id="@+id/moistureBtn"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:text="Moisture"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/addBtn"/>
+
+</RelativeLayout>
