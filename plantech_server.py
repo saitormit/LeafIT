@@ -5,11 +5,7 @@ from flask_ngrok import run_with_ngrok
 import database as db
 
 app = Flask(__name__)
-#run_with_ngrok(app)
-#client = MongoClient("mongodb+srv://saitormit:Ourplantech@cluster0.cwdv9fx.mongodb.net/?retryWrites=true&w=majority")
-#collection = db.plantechDB["UserPlants"]
-#collection.insert_one({"_id": 2, "Plant": "Test Plant", "Stage": "Baby"})
-#Setup MongoDB
+run_with_ngrok(app)
 
 @app.route("/")
 def hello():
