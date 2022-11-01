@@ -60,14 +60,41 @@
         android:text="Moisture"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/addBtn"/>
+    <Button
+        android:id="@+id/emptyBtn"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:text="Empty a pot"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/moistureBtn"/>
 
     <TextView
-        android:id="@+id/apitxt"
+        android:id="@+id/apiTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="API Call to be shown here"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/moistureBtn"
+        android:layout_below="@+id/emptyBtn"
         android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/potTwoTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pot 2 is empty"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/plantSpinner"
+        android:layout_marginBottom="60dp"/>
+
+    <TextView
+        android:id="@+id/potOneTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pot 1 is empty"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/potTwoTxt"
+        android:layout_marginBottom="20dp"/>
 
 </RelativeLayout>

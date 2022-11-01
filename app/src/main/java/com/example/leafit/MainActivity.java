@@ -29,9 +29,9 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button addBtn, moistureBtn;
+    private Button addBtn, moistureBtn, emptyBtn;
     private Spinner plantSpinner, stageSpinner, potSpinner;
-    private TextView textView;
+    private TextView textView, potOneTxt, potTwoTxt;
     //private RelativeLayout parent; //Might not be used
 
     @Override
@@ -42,27 +42,40 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         initSpinners();
 
+        //Server URL
+        String serverURL = "https://8f68-172-58-190-153.ngrok.io";
+
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Plant configurations sent", Toast.LENGTH_SHORT).show();
                 //String url = "https://37689a43-49d4-42ce-8915-09642ab4daf2.mock.pstmn.io/mocks";
-                String url = "https://5ffe-172-58-184-50.ngrok.io/pots-config";
+                String api_URL = serverURL + "/pots-config";
+
                 RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
 
                 JSONObject body = new JSONObject();
                 try{
                     body.put("Plant", plantSpinner.getSelectedItem().toString());
                     body.put("Stage", stageSpinner.getSelectedItem().toString());
-                    body.put("Pot Number", potSpinner.getSelectedItem().toString());
+                    body.put("Pot Number", potSpinner.getSelectedItem()); //Given as integer
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, body, new Response.Listener<JSONObject>() {
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, api_URL, body, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(MainActivity.this, "POST request successful", Toast.LENGTH_SHORT).show();
+                        try {
+                            Toast.makeText(MainActivity.this, response.getString("Message"), Toast.LENGTH_SHORT).show();
+                            if (body.getInt("Pot Number") == 1){
+                                potOneTxt.setText(String.format("%s in Pot 1", body.getString("Plant")));
+                            }else if (body.getInt("Pot Number") == 2){
+                                potTwoTxt.setText(String.format("%s in Pot 2", body.getString("Plant")));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         textView.setText("Response: " + response.toString());
                     }
                 }, new Response.ErrorListener() {
@@ -73,27 +86,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 queue.add(request);
-                /*StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(MainActivity.this, "POST request successful", Toast.LENGTH_SHORT).show();
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, "POST request failed", Toast.LENGTH_SHORT).show();
-                        Log.e("Error", "POST failed");
-                    }
-                }){
-                    protected Map<String, String> getParams(){
-                        Map<String, String> params = new HashMap<String, String>();
-
-                        params.put("Plant", plantSpinner.getSelectedItem().toString());
-                        params.put("Stage", stageSpinner.getSelectedItem().toString());
-                        params.put("Pot Number", potSpinner.getSelectedItem().toString());
-                        return params;
-                    }
-                };*/
             }
         });
 
@@ -123,14 +115,55 @@ public class MainActivity extends AppCompatActivity {
                 queue.add(stringRequest);
             }
         });
+        //TODO: Add Empty a Pot button here
+        emptyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String api_URL = serverURL + "/pots-config";
+
+                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+
+                JSONObject empty_pot = new JSONObject();
+                try{
+                    empty_pot.put("Pot Number", potSpinner.getSelectedItem()); //Given as integer
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, api_URL, empty_pot, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Toast.makeText(MainActivity.this, response.getString("Message"), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        textView.setText("Response: " + response.toString());
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, "DELETE request failed", Toast.LENGTH_SHORT).show();
+                        Log.e("Error", "DELETE failed");
+                    }
+                });
+                queue.add(request);
+            }
+        });
     }
 
     private void initSpinners() {
         ArrayList<String> plants = new ArrayList<>();
         plants.add("Basil");
+        plants.add("Blueberry");
+        plants.add("Cactus");
+        plants.add("Cranberry");
+        plants.add("Green Onion");
+        plants.add("Lavender");
+        plants.add("Mario's Flower");
         plants.add("Mint");
         plants.add("Tomato");
-        plants.add("Flower");
+        plants.add("Tulip");
 
         ArrayList<String> stages = new ArrayList<>();
         stages.add("Seed");
@@ -159,10 +192,13 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         addBtn = findViewById(R.id.addBtn);
         moistureBtn = findViewById(R.id.moistureBtn);
+        emptyBtn = findViewById(R.id.emptyBtn);
         plantSpinner = findViewById(R.id.plantSpinner);
         stageSpinner = findViewById(R.id.stageSpinner);
         potSpinner = findViewById(R.id.potSpinner);
-        textView = findViewById(R.id.apitxt);
+        textView = findViewById(R.id.apiTxt);
+        potOneTxt = findViewById(R.id.potOneTxt);
+        potTwoTxt = findViewById(R.id.potTwoTxt);
         //parent = findViewById(R.id.parent); //Might not be used
     }
 }
