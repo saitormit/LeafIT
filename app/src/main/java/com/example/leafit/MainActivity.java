@@ -2,6 +2,7 @@ package com.example.leafit;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -92,27 +93,29 @@ public class MainActivity extends AppCompatActivity {
         moistureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Analyze moisture level", Toast.LENGTH_SHORT).show();
-// ...
-// Instantiate the RequestQueue.
-                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                String url = "https://7c5f2e13-b665-4ccb-97fc-70e59a216686.mock.pstmn.io/get";
-// Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                // Display the first 500 characters of the response string.
-                                textView.setText("Response is: " + response.substring(0,500));
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        textView.setText("That didn't work!");
-                    }
-                });
-// Add the request to the RequestQueue.
-                queue.add(stringRequest);
+                Intent intent = new Intent(MainActivity.this, MoistureActivity.class);
+                startActivity(intent);
+//                Toast.makeText(MainActivity.this, "Analyze moisture level", Toast.LENGTH_SHORT).show();
+//// ...
+//// Instantiate the RequestQueue.
+//                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+//                String url = "https://7c5f2e13-b665-4ccb-97fc-70e59a216686.mock.pstmn.io/get";
+//// Request a string response from the provided URL.
+//                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+//                        new Response.Listener<String>() {
+//                            @Override
+//                            public void onResponse(String response) {
+//                                // Display the first 500 characters of the response string.
+//                                textView.setText("Response is: " + response.substring(0,500));
+//                            }
+//                        }, new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        textView.setText("That didn't work!");
+//                    }
+//                });
+//// Add the request to the RequestQueue.
+//                queue.add(stringRequest);
             }
         });
         //TODO: Add Empty a Pot button here
