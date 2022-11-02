@@ -14,7 +14,7 @@ def hello():
     #return render_template("home.html")
 
 @app.route("/pots-config", methods=["GET","POST","DELETE"])
-def json_pots():
+def configure_pots():
     #Database Parameters
     collection = db.plantechDB["UserPlants"]
     #Input received from Android
@@ -43,6 +43,11 @@ def json_pots():
             return jsonify({"Message": "Pot " + str(empty_pot) + " is now empty"})
         else:
             return jsonify({"Message": "Pot " + str(empty_pot) + " is already empty"})
+
+@app.route("/moisture-data", methods=["GET","POST"])
+def manage_moisture():
+    collection = db.plantechDB["MoistureReadings"]
+    return jsonify({"Message": "Moisture data"})
             
 if __name__ == "__main__":
     app.run()
