@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         initSpinners();
 
         //Server URL
-        String serverURL = "https://8f68-172-58-190-153.ngrok.io";
+        String serverURL = "https://8e91-128-210-107-131.ngrok.io";
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,22 +119,14 @@ public class MainActivity extends AppCompatActivity {
 //                queue.add(stringRequest);
             }
         });
-        //TODO: Add Empty a Pot button here
         emptyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String api_URL = serverURL + "/pots-config";
+                String api_URL = serverURL + "/pots-config?empty=" + potSpinner.getSelectedItem().toString();
 
                 RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
 
-                JSONObject empty_pot = new JSONObject();
-                try{
-                    empty_pot.put("Pot Number", potSpinner.getSelectedItem()); //Given as integer
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, api_URL, empty_pot, new Response.Listener<JSONObject>() {
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, api_URL, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
