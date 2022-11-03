@@ -17,10 +17,13 @@ def hello():
 def configure_pots():
     #Database Parameters
     collection = db.plantechDB["UserPlants"]
-    #Input received from Android
-    userInput = request.get_json()
 
-    if request.method == "POST":
+    if request.method == "GET":
+        return jsonify({"Message": "GET request received"})
+    
+    elif request.method == "POST":
+        #Input received from Android
+        userInput = request.get_json()
         # "userInput["Pot Number"] is an integer
         pot = userInput["Pot Number"]
         plant = userInput["Plant"]
@@ -31,13 +34,11 @@ def configure_pots():
             return jsonify({"Message": plant + " added at pot " + str(pot) + " succesfully"})
         else:
             return jsonify({"Message": "Pot " + str(pot) + " is already being used"})
-
-    elif request.method == "GET":
-
-        return jsonify({"Message": "GET request received"})
     
     elif request.method == "DELETE":
-        empty_pot = userInput["Pot Number"]
+        #Input from the user with the ID to be deleted
+        empty_pot = int(request.args.get("empty"))
+
         if collection.count_documents({"_id": empty_pot}) > 0:
             collection.delete_one({"_id": empty_pot})
             return jsonify({"Message": "Pot " + str(empty_pot) + " is now empty"})
