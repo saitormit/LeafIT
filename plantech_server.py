@@ -17,12 +17,14 @@ def hello():
 def configure_pots():
     #Number of pots:
     potsNum = 2
-    #Database Parameters
+    #Database Collections
     userCollection = db.plantechDB["UserPlants"]
+    infoCollection = db.plantechDB["PlantsInfo"]
+    readingCollection = db.plantechDB["MoistureReadings"]
 
     if request.method == "GET":
         moistConfig = {}
-        infoCollection = db.plantechDB["PlantsInfo"]
+        
         for id in range(1, potsNum+1):
             if userCollection.count_documents({"_id": id}):
                 plant = userCollection.find_one({"_id": id}).get("Plant")
@@ -60,7 +62,7 @@ def configure_pots():
 
 @app.route("/moisture-data", methods=["GET","POST"])
 def manage_moisture():
-    userCollection = db.plantechDB["MoistureReadings"]
+    
     return jsonify({"Message": "Moisture data"})
             
 if __name__ == "__main__":
