@@ -15,8 +15,7 @@ def hello():
 
 @app.route("/pots-config", methods=["GET","POST","DELETE"])
 def configure_pots():
-    #Number of pots:
-    potsNum = 2
+    
     #Database Collections
     userCollection = db.plantechDB["UserPlants"]
     infoCollection = db.plantechDB["PlantsInfo"]
@@ -24,8 +23,8 @@ def configure_pots():
 
     if request.method == "GET":
         moistConfig = {}
-        
-        for id in range(1, potsNum+1):
+
+        for id in range(1, db.potsNum+1):
             if userCollection.count_documents({"_id": id}):
                 plant = userCollection.find_one({"_id": id}).get("Plant")
                 moisture = infoCollection.find_one({"Plant": plant}).get("Moisture")
@@ -34,7 +33,6 @@ def configure_pots():
                 moistConfig["pot"+str(id)] = None
 
         return jsonify(moistConfig)
-        #return jsonify({"Message": "GET request received"})
     
     elif request.method == "POST":
         #Input received from Android
