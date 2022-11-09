@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         initSpinners();
 
         //Server URL
-        String serverURL = "https://8e91-128-210-107-131.ngrok.io";
+        String serverURL = "https://6f9c-128-210-107-129.ngrok.io";
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, MoistureActivity.class);
+                intent.putExtra("serverURL", serverURL);
                 startActivity(intent);
 //                Toast.makeText(MainActivity.this, "Analyze moisture level", Toast.LENGTH_SHORT).show();
 //// ...

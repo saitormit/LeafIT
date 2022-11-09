@@ -27,6 +27,26 @@
         android:layout_marginTop="200dp"
         android:text="Water My Plant"/>
 
+    <CheckBox
+        android:id="@+id/checkboxOne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/emptyPlotTxt"
+        android:layout_marginTop="30dp"
+        android:text="Pot 1"
+        android:layout_centerHorizontal="true"/>
+
+    <CheckBox
+        android:id="@+id/checkboxTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkboxOne"
+        android:layout_marginTop="10dp"
+        android:text="Pot 2"
+        android:layout_centerHorizontal="true"/>
+
+
+
 
 
 </RelativeLayout>
