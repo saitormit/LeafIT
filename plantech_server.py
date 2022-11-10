@@ -3,6 +3,7 @@ from flask import request
 from flask import jsonify
 from flask_ngrok import run_with_ngrok
 import database as db
+import firebase as fcm
 
 app = Flask(__name__)
 run_with_ngrok(app)
@@ -15,7 +16,7 @@ def hello():
 
 @app.route("/pots-config", methods=["GET","POST","DELETE"])
 def configure_pots():
-    
+
     #Database Collections
     userCollection = db.plantechDB["UserPlants"]
     infoCollection = db.plantechDB["PlantsInfo"]
@@ -62,6 +63,28 @@ def configure_pots():
 def manage_moisture():
     
     return jsonify({"Message": "Moisture data"})
+
+@app.route("/activate-water", methods=["GET", "POST", "PUT"])
+def manage_water():
+    waterCollection = db.plantechDB["WaterCommand"]
+
+    if request.method == "GET":
+        #Consider not hardcoding pots to make it scalable for more pots
+        document = waterCollection.find_one({"_id" : 0})
+        return jsonify({"Pot1": document.get("Pot1"), "Pot2": document.get("Pot2")})
+
+    elif request.method == "PUT":
+        #For PUT method, if the client is Arduino,
+        #Firebase Cloud Messaging should be activated
+        clientId = request.args.get("client")
+        toWater = request.get_json()
+
+        waterCollection.replace_one({"_id": 0}, toWater)
+        if clientId == "arduino":
+            #fcm.pushMessage("TOKEN", toWater)
+            return jsonify({"Message": "Request sent by Arduino"})
+
+        return jsonify(toWater)
             
 if __name__ == "__main__":
     app.run()
