@@ -20,7 +20,6 @@ def configure_pots():
     #Database Collections
     userCollection = db.plantechDB["UserPlants"]
     infoCollection = db.plantechDB["PlantsInfo"]
-    readingCollection = db.plantechDB["MoistureReadings"]
 
     if request.method == "GET":
         moistConfig = {}
@@ -31,7 +30,7 @@ def configure_pots():
                 moisture = infoCollection.find_one({"Plant": plant}).get("Moisture")
                 moistConfig["pot"+str(id)] = moisture
             else:
-                moistConfig["pot"+str(id)] = None
+                moistConfig["pot"+str(id)] = 0
 
         return jsonify(moistConfig)
     
@@ -61,28 +60,38 @@ def configure_pots():
 
 @app.route("/moisture-data", methods=["GET","POST"])
 def manage_moisture():
+    readingCollection = db.plantechDB["MoistureReadings"]
     
+    if request.method == "POST":
+        reading = request.get_json()
+        #Post Sensor readings in MongoDB database
+
     return jsonify({"Message": "Moisture data"})
 
-@app.route("/activate-water", methods=["GET", "POST", "PUT"])
+@app.route("/activate-water", methods=["GET","PUT"])
 def manage_water():
+    #waterCollection contains {"_id": 0, shouldWater1: false, shouldWater2: false} by default
     waterCollection = db.plantechDB["WaterCommand"]
 
     if request.method == "GET":
         #Consider not hardcoding pots to make it scalable for more pots
         document = waterCollection.find_one({"_id" : 0})
-        return jsonify({"Pot1": document.get("Pot1"), "Pot2": document.get("Pot2")})
+        return jsonify({"shouldWater1": document.get("shouldWater1"), "shouldWater2": document.get("shouldWater2")})
 
     elif request.method == "PUT":
         #For PUT method, if the client is Arduino,
-        #Firebase Cloud Messaging should be activated
+        #Firebase Cloud Messaging should be called
         clientId = request.args.get("client")
         toWater = request.get_json()
 
         waterCollection.replace_one({"_id": 0}, toWater)
         if clientId == "arduino":
-            #fcm.pushMessage("TOKEN", toWater)
-            return jsonify({"Message": "Request sent by Arduino"})
+            try:
+                fcm.pushMessage({"Message": "Successful override watering"})
+            except:
+                print("Not connected to Firebase")
+
+            return jsonify({"Message": "Override watering set to false"})
 
         return jsonify(toWater)
             
