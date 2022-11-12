@@ -23,7 +23,6 @@ import org.json.JSONObject;
 public class MoistureActivity extends AppCompatActivity {
 
     private Button btnWater;
-    private TextView emptyPlotTxt;
     private CheckBox checkboxOne, checkboxTwo;
 
     @Override
@@ -36,23 +35,25 @@ public class MoistureActivity extends AppCompatActivity {
         btnWater.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MoistureActivity.this, "Water command pushed", Toast.LENGTH_SHORT).show();
-                String api_URL = serverURL + "/activate-water";
+                //Toast.makeText(MoistureActivity.this, "Water command pushed", Toast.LENGTH_SHORT).show();
+                String api_URL = serverURL + "/activate-water?client=android";
 
                 RequestQueue queue = Volley.newRequestQueue(MoistureActivity.this);
 
                 JSONObject body = new JSONObject();
                 try{
-                    body.put("Pot1", checkboxOne.isChecked());
-                    body.put("Pot2", checkboxTwo.isChecked());
+                    body.put("_id", 0);
+                    body.put("shouldWater1", checkboxOne.isChecked());
+                    body.put("shouldWater2", checkboxTwo.isChecked());
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, api_URL, body, new Response.Listener<JSONObject>() {
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, api_URL, body, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        emptyPlotTxt.setText(response.toString());
+                        Toast.makeText(MoistureActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                        //emptyPlotTxt.setText(response.toString());
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -68,7 +69,6 @@ public class MoistureActivity extends AppCompatActivity {
 
     private void initViews() {
         btnWater = findViewById(R.id.waterBtn);
-        emptyPlotTxt = findViewById(R.id.emptyPlotTxt);
         checkboxOne = findViewById(R.id.checkboxOne);
         checkboxTwo = findViewById(R.id.checkboxTwo);
     }
