@@ -9,7 +9,8 @@ char pass[] = "Parkpark";
 int status = WL_IDLE_STATUS;
 WiFiClient wifi;
 //HTTP Server Parameters
-char server[] = "b655-128-210-107-131.ngrok.io";
+//Always delete "https://"
+char server[] = "75f1-128-210-107-130.ngrok.io";
 int port = 80;
 HttpClient client = HttpClient(wifi, server, port);
 
@@ -66,7 +67,7 @@ void loop() {
   // if (thresholdTwo > 0 && moisture < thresholdTwo){
   //   waterPlant()
   // }
-  Serial.println("Making GET request to check overide watering");
+  Serial.println("Making GET request to check override watering");
   client.get("/activate-water?client=arduino");  
   int statusCode = client.responseStatusCode();
   String response = client.responseBody();  
