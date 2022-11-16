@@ -4,6 +4,7 @@ from flask import jsonify
 from flask_ngrok import run_with_ngrok
 import database as db
 import firebase as fcm
+import datetime
 
 app = Flask(__name__)
 run_with_ngrok(app)
@@ -61,12 +62,39 @@ def configure_pots():
 @app.route("/moisture-data", methods=["GET","POST"])
 def manage_moisture():
     readingCollection = db.plantechDB["MoistureReadings"]
-    
-    if request.method == "POST":
-        reading = request.get_json()
-        #Post Sensor readings in MongoDB database
 
-    return jsonify({"Message": "Moisture data"})
+    if request.method == "GET":
+        plotData = {
+            "pot1":{
+                "time": [],
+                "moisture": []
+            },
+            "pot2":{
+                "time": [],
+                "moisture": []
+            }
+        }
+
+        for pot in range(1, db.potsNum+1):
+
+            if readingCollection.count_documents({"pot": pot}) > 0:
+                cursor = readingCollection.find({"pot": pot}).sort("timestamp",1).limit(10)
+                for doc in cursor:
+                    #Append timestamp into time array within plotData
+                    plotData.get("pot"+str(pot)).get("time").append(doc.get("timestamp"))
+                    #Append moisture data into moisture array within plotData
+                    plotData.get("pot"+str(pot)).get("moisture").append(doc.get("moisture"))
+                 
+        return plotData
+        #Sort timestamps and group by pot -> get timestamp and moisture
+        #Create time and moisture array with the timestamps and moisture and add into a new json file
+    
+    elif request.method == "POST":
+        reading = request.get_json()
+        reading["timestamp"] = datetime.datetime.utcnow()
+        readingCollection.insert_one(reading)
+        #Post Sensor readings in MongoDB database
+        return jsonify({"Message": "Moisture data received"})
 
 @app.route("/activate-water", methods=["GET","PUT"])
 def manage_water():
