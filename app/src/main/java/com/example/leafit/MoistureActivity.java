@@ -16,11 +16,20 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class MoistureActivity extends AppCompatActivity {
 
@@ -34,7 +43,8 @@ public class MoistureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_moisture);
         String serverURL = getIntent().getStringExtra("serverURL");
         initViews();
-        plotGraphs(serverURL, plotOne, plotTwo);
+        plotGraphs(serverURL, plotOne, 1);
+        plotGraphs(serverURL, plotTwo, 2);
 
         btnWater.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +67,6 @@ public class MoistureActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Toast.makeText(MoistureActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                        //emptyPlotTxt.setText(response.toString());
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -71,27 +80,63 @@ public class MoistureActivity extends AppCompatActivity {
         });
     }
 
-    private void plotGraphs(String serverURL, GraphView plotOne, GraphView plotTwo) {
-        String api_URL = serverURL + "/moisture-data";
+    private void plotGraphs(String serverURL, GraphView plotView, int potNum) {
+        String api_URL = serverURL + "/moisture-data" + "?pot=" + potNum;
         RequestQueue queue = Volley.newRequestQueue(MoistureActivity.this);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, api_URL, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 //Toast.makeText(MoistureActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                //TODO: Loop and Get from response "time" and "moisture" array for each pot.
-                for(int i = 1; i < response.length()+1; i++) {
-                    Object timestampList = new ArrayList<>();
-                    Object moistureList = new ArrayList<>();
+                JSONArray timestampList = null;
+                JSONArray moistureList = null;
+                try {
+                    timestampList = response.getJSONArray("time");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    moistureList = response.getJSONArray("moisture");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (timestampList == null) {
+                    return;
+                }
+                //Toast.makeText(MoistureActivity.this, timestampList.toString(), Toast.LENGTH_SHORT).show();
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+                DataPoint[] dataPoints = new DataPoint[timestampList.length()];
+
+                String sTimeData = null;
+                Double moistureData = null;
+                Date timeData = null;
+                for(int index = 0; index < timestampList.length(); index++){
                     try {
-                        timestampList = response.getJSONObject("pot"+i).get("time");
-                        moistureList = response.getJSONObject("pot"+i).get("moisture");
+                        sTimeData = timestampList.getString(index);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    //Toast.makeText(MoistureActivity.this, timestampList.toString(), Toast.LENGTH_SHORT).show();
+                    try {
+                        moistureData = moistureList.getDouble(index);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        timeData = formatter.parse(sTimeData);
+                    } catch (ParseException ex) {
+                        ex.printStackTrace();
+                    }
 
+                    DataPoint point = new DataPoint(timeData, moistureData);
+                    dataPoints[index] = point;
                 }
+                //Toast.makeText(MoistureActivity.this, sTimeData, Toast.LENGTH_SHORT).show();
+                PointsGraphSeries<DataPoint> series = new PointsGraphSeries<DataPoint>(dataPoints);
+
+                plotView.addSeries(series);
+
             }
         }, new Response.ErrorListener() {
             @Override

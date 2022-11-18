@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         initSpinners();
 
         //Server URL
-        String serverURL = "https://f5af-128-210-107-130.ngrok.io";
+        String serverURL = "https://6bd8-128-210-107-131.ngrok.io";
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
