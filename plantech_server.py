@@ -64,26 +64,22 @@ def manage_moisture():
     readingCollection = db.plantechDB["MoistureReadings"]
 
     if request.method == "GET":
+        pot = int(request.args.get("pot"))
+
         plotData = {
-            "pot1":{
-                "time": [],
-                "moisture": []
-            },
-            "pot2":{
-                "time": [],
-                "moisture": []
-            }
+            "time": [],
+            "moisture":[]
         }
 
-        for pot in range(1, db.potsNum+1):
-
-            if readingCollection.count_documents({"pot": pot}) > 0:
-                cursor = readingCollection.find({"pot": pot}).sort("timestamp",1).limit(10)
-                for doc in cursor:
-                    #Append timestamp into time array within plotData
-                    plotData.get("pot"+str(pot)).get("time").append(doc.get("timestamp"))
-                    #Append moisture data into moisture array within plotData
-                    plotData.get("pot"+str(pot)).get("moisture").append(doc.get("moisture"))
+        if readingCollection.count_documents({"pot": pot}) > 0:
+            cursor = readingCollection.find({"pot": pot}).sort("timestamp",1).limit(10)
+            for doc in cursor:
+                #Append timestamp into time array within plotData
+                timestamp = doc.get("timestamp")
+                timestampFmt = datetime.datetime.strftime(timestamp, "%Y/%m/%d %H:%M:%S")
+                plotData.get("time").append(timestampFmt)
+                #Append moisture data into moisture array within plotData
+                plotData.get("moisture").append(doc.get("moisture"))
                  
         return plotData
         #Sort timestamps and group by pot -> get timestamp and moisture
