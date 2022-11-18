@@ -15,27 +15,27 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class MoistureActivity extends AppCompatActivity {
 
     private Button btnWater;
     private CheckBox checkboxOne, checkboxTwo;
     private GraphView plotOne, plotTwo;
+    //SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +45,8 @@ public class MoistureActivity extends AppCompatActivity {
         initViews();
         plotGraphs(serverURL, plotOne, 1);
         plotGraphs(serverURL, plotTwo, 2);
+        configureAxis(plotOne);
+        configureAxis(plotTwo);
 
         btnWater.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,11 +134,13 @@ public class MoistureActivity extends AppCompatActivity {
                     DataPoint point = new DataPoint(timeData, moistureData);
                     dataPoints[index] = point;
                 }
-                //Toast.makeText(MoistureActivity.this, sTimeData, Toast.LENGTH_SHORT).show();
-                PointsGraphSeries<DataPoint> series = new PointsGraphSeries<DataPoint>(dataPoints);
+                //Toast.makeText(MoistureActivity.this, timeData.toString(), Toast.LENGTH_SHORT).show();
+                PointsGraphSeries<DataPoint> pSeries = new PointsGraphSeries<DataPoint>(dataPoints);
+                LineGraphSeries<DataPoint> lSeries = new LineGraphSeries<>(dataPoints);
 
-                plotView.addSeries(series);
-
+                plotView.addSeries(pSeries);
+                plotView.addSeries(lSeries);
+                pSeries.setSize(10);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -146,6 +150,23 @@ public class MoistureActivity extends AppCompatActivity {
             }
         });
         queue.add(request);
+    }
+
+    private void configureAxis(GraphView plotView) {
+        GridLabelRenderer gridLabel = plotView.getGridLabelRenderer();
+        gridLabel.setHorizontalAxisTitle("Time");
+        gridLabel.setVerticalAxisTitle("Moisture");
+
+        plotView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+            @Override
+            public String formatLabel(double value, boolean isValueX) {
+                if (isValueX) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                    return formatter.format(value);
+                }
+                return super.formatLabel(value, isValueX);
+            }
+        });
     }
 
     private void initViews() {
