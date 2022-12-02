@@ -17,10 +17,10 @@ def hello():
 
 @app.route("/pots-config", methods=["GET","POST","DELETE"])
 def configure_pots():
-
-    #Database Collections
+    #MongoDB Collections
     userCollection = db.plantechDB["UserPlants"]
     infoCollection = db.plantechDB["PlantsInfo"]
+    readingCollection = db.plantechDB["MoistureReadings"]
 
     if request.method == "GET":
         moistConfig = {}
@@ -45,9 +45,9 @@ def configure_pots():
 
         if userCollection.count_documents({"_id": pot}) == 0:
             userCollection.insert_one({"_id": pot, "Plant": plant, "Stage": stage})
-            return jsonify({"Message": plant + " added at pot " + str(pot) + " succesfully"})
+            return {"Message": "Added"}
         else:
-            return jsonify({"Message": "Pot " + str(pot) + " is already being used"})
+            return {"Message": "Unavailable"}
     
     elif request.method == "DELETE":
         #Input from the user with the ID to be deleted
@@ -55,9 +55,12 @@ def configure_pots():
 
         if userCollection.count_documents({"_id": empty_pot}) > 0:
             userCollection.delete_one({"_id": empty_pot})
-            return jsonify({"Message": "Pot " + str(empty_pot) + " is now empty"})
+            readingCollection.delete_many({"pot": empty_pot})
+            #return {"Message": "Pot " + str(empty_pot) + " is empty now"}
+            return {"Message": "Now empty"}
         else:
-            return jsonify({"Message": "Pot " + str(empty_pot) + " is already empty"})
+            #return {"Message": "Pot " + str(empty_pot) + " is already empty"}
+            return {"Message": "Already empty"}
 
 @app.route("/moisture-data", methods=["GET","POST"])
 def manage_moisture():
@@ -72,14 +75,14 @@ def manage_moisture():
         }
 
         if readingCollection.count_documents({"pot": pot}) > 0:
-            cursor = readingCollection.find({"pot": pot}).sort("timestamp",1).limit(10)
+            cursor = readingCollection.find({"pot": pot}).sort("timestamp",-1).limit(10)
             for doc in cursor:
                 #Append timestamp into time array within plotData
                 timestamp = doc.get("timestamp")
                 timestampFmt = datetime.datetime.strftime(timestamp, "%Y/%m/%d %H:%M:%S")
-                plotData.get("time").append(timestampFmt)
+                plotData.get("time").insert(0, timestampFmt)
                 #Append moisture data into moisture array within plotData
-                plotData.get("moisture").append(doc.get("moisture"))
+                plotData.get("moisture").insert(0, doc.get("moisture"))
                  
         return plotData
         #Sort timestamps and group by pot -> get timestamp and moisture
