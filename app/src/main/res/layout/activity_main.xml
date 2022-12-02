@@ -8,7 +8,7 @@
 
     <Spinner
         android:id="@+id/plantSpinner"
-        android:layout_width="200dp"
+        android:layout_width="180dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
@@ -21,23 +21,25 @@
 
     <Spinner
         android:id="@+id/stageSpinner"
-        android:layout_width="200dp"
+        android:layout_width="180dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/plantSpinner"/>
+        android:layout_below="@+id/potSpinner"
+        android:visibility="invisible"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Growth stage:"
         android:layout_alignTop="@+id/stageSpinner"
-        android:layout_toStartOf="@+id/stageSpinner"/>
+        android:layout_toStartOf="@+id/stageSpinner"
+        android:visibility="invisible"/>
 
     <Spinner
         android:id="@+id/potSpinner"
-        android:layout_width="200dp"
+        android:layout_width="180dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/stageSpinner"/>
+        android:layout_below="@+id/plantSpinner"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,22 +49,22 @@
 
     <Button
         android:id="@+id/addBtn"
-        android:layout_width="250dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:text="Add plant"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/potSpinner"
-        android:layout_marginTop="20dp"/>
+        android:layout_below="@+id/stageSpinner"
+        android:layout_marginTop="10dp"/>
     <Button
         android:id="@+id/moistureBtn"
-        android:layout_width="250dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:text="Moisture"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/addBtn"/>
     <Button
         android:id="@+id/emptyBtn"
-        android:layout_width="250dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:text="Empty a pot"
         android:layout_centerHorizontal="true"
@@ -78,23 +80,74 @@
         android:layout_marginTop="20dp"/>
 
     <TextView
-        android:id="@+id/potTwoTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pot 2 is empty"
-        android:textSize="20dp"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/plantSpinner"
-        android:layout_marginBottom="60dp"/>
-
-    <TextView
         android:id="@+id/potOneTxt"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:text="Pot 1 is empty"
-        android:textSize="20dp"
+        android:textSize="16dp"
+        android:layout_toLeftOf="@+id/anchor"
+        android:layout_marginRight="15dp"
+        android:layout_below="@+id/potOneImgView"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/potTwoTxt"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="Pot 2 is empty"
+        android:textSize="16dp"
+        android:layout_toRightOf="@+id/anchor"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/potTwoImgView"
+        android:gravity="center"/>
+
+    <View
+        android:id="@+id/anchor"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/potTwoTxt"
-        android:layout_marginBottom="20dp"/>
+        android:layout_centerVertical="true"/>
+
+    <ImageView
+        android:id="@+id/potOneEmptyImgView"
+        app:srcCompat="@drawable/pot_one_empty_min"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="80dp"
+        android:layout_alignRight="@+id/anchor"
+        android:layout_marginRight="20dp"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/potOneImgView"
+        app:srcCompat="@drawable/pot_one_icon_min"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="100dp"
+        android:layout_alignRight="@+id/anchor"
+        android:layout_marginRight="20dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/potTwoEmptyImgView"
+        app:srcCompat="@drawable/pot_two_empty_min"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_alignLeft="@+id/anchor"
+        android:layout_marginLeft="20dp"
+        android:layout_alignTop="@+id/potOneImgView"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/potTwoImgView"
+        app:srcCompat="@drawable/pot_two_icon_min"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_alignLeft="@+id/anchor"
+        android:layout_marginLeft="20dp"
+        android:layout_alignTop="@+id/potOneImgView"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

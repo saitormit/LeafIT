@@ -8,37 +8,70 @@
 
     <com.jjoe64.graphview.GraphView
         android:id="@+id/plotOne"
-        android:layout_width="match_parent"
+        android:layout_width="330dp"
         android:layout_height="250dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pot 1"
+        android:textColor="@color/black"
+        android:layout_alignTop="@+id/plotOne"
+        android:visibility="gone"/>
+
     <com.jjoe64.graphview.GraphView
         android:id="@+id/plotTwo"
-        android:layout_width="match_parent"
+        android:layout_width="330dp"
         android:layout_height="250dp"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/plotOne"
         android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pot 2"
+        android:textColor="@color/black"
+        android:layout_alignTop="@+id/plotTwo"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/waterBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="80dp"
-        android:layout_marginTop="200dp"
+        android:layout_below="@+id/checkboxOne"
+        android:layout_marginTop="10dp"
         android:text="Water My Plant"/>
+
+    <View
+        android:id="@+id/anchor"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select the pot to water"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/plotTwo"
+        android:layout_marginTop="30dp"/>
 
     <CheckBox
         android:id="@+id/checkboxOne"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/plotTwo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_toLeftOf="@+id/anchor"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="50dp"
         android:text="Pot 1"
         tools:ignore="TouchTargetSizeCheck" />
 
@@ -47,8 +80,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/checkboxOne"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/anchor"
+        android:layout_marginLeft="10dp"
+        android:layout_alignBaseline="@+id/checkboxOne"
         android:text="Pot 2"
         tools:ignore="TouchTargetSizeCheck" />
 

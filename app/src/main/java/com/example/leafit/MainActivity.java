@@ -8,18 +8,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -27,31 +25,32 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button addBtn, moistureBtn, emptyBtn;
     private Spinner plantSpinner, stageSpinner, potSpinner;
     private TextView textView, potOneTxt, potTwoTxt;
+    private ImageView potOneImgView, potOneEmptyImgView, potTwoImgView, potTwoEmptyImgView;
     //private RelativeLayout parent; //Might not be used
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getSupportActionBar().hide();
         initViews();
         initSpinners();
+        HashMap<Integer, TextView> potsTxtViews = initPotsTxt();
+        HashMap<Integer, ImageView> potsImgViews = initPotsImg();
 
         //Server URL
-        String serverURL = "https://2f49-128-210-107-131.ngrok.io";
+        String serverURL = "https://a98c-172-58-227-36.ngrok.io";
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Plant configurations sent", Toast.LENGTH_SHORT).show();
-                //String url = "https://37689a43-49d4-42ce-8915-09642ab4daf2.mock.pstmn.io/mocks";
                 String api_URL = serverURL + "/pots-config";
 
                 RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
@@ -69,16 +68,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Toast.makeText(MainActivity.this, response.getString("Message"), Toast.LENGTH_SHORT).show();
-                            if (body.getInt("Pot Number") == 1){
-                                potOneTxt.setText(String.format("%s in Pot 1", body.getString("Plant")));
-                            }else if (body.getInt("Pot Number") == 2){
-                                potTwoTxt.setText(String.format("%s in Pot 2", body.getString("Plant")));
+                            if (response.getString("Message").equals("Added")){
+                                int potNum = body.getInt("Pot Number");
+                                potsTxtViews.get(potNum).setText(body.getString("Plant"));
+                                potsImgViews.get(potNum).setVisibility(View.VISIBLE);
+                            }else if(response.getString("Message").equals("Unavailable")){
+                                Toast.makeText(MainActivity.this, "Pot " + body.getInt("Pot Number") + " is already being used", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        textView.setText("Response: " + response.toString());
+                        textView.setText(response.toString());
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -132,10 +132,15 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             Toast.makeText(MainActivity.this, response.getString("Message"), Toast.LENGTH_SHORT).show();
+                            if(response.getString("Message").equals("Now empty")){
+                                int potNum = (int) potSpinner.getSelectedItem();
+                                potsTxtViews.get(potNum).setText("Pot " + potNum + " is empty");
+                                potsImgViews.get(potNum).setVisibility(View.INVISIBLE);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        textView.setText("Response: " + response.toString());
+                        textView.setText(response.toString());
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -147,6 +152,20 @@ public class MainActivity extends AppCompatActivity {
                 queue.add(request);
             }
         });
+    }
+
+    private HashMap<Integer, ImageView> initPotsImg() {
+        HashMap<Integer, ImageView> potsImgView = new HashMap<>();
+        potsImgView.put(1, potOneImgView);
+        potsImgView.put(2, potTwoImgView);
+        return potsImgView;
+    }
+
+    private HashMap<Integer, TextView> initPotsTxt() {
+        HashMap<Integer, TextView> potsTxtView = new HashMap<>();
+        potsTxtView.put(1, potOneTxt);
+        potsTxtView.put(2, potTwoTxt);
+        return potsTxtView;
     }
 
     private void initSpinners() {
@@ -196,6 +215,10 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.apiTxt);
         potOneTxt = findViewById(R.id.potOneTxt);
         potTwoTxt = findViewById(R.id.potTwoTxt);
+        potOneImgView = findViewById(R.id.potOneImgView);
+        potOneEmptyImgView = findViewById(R.id.potOneEmptyImgView);
+        potTwoImgView = findViewById(R.id.potTwoImgView);
+        potTwoEmptyImgView = findViewById(R.id.potTwoEmptyImgView);
         //parent = findViewById(R.id.parent); //Might not be used
     }
 }

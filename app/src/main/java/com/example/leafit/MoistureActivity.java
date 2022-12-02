@@ -26,27 +26,30 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
+import java.util.TimeZone;
 
 public class MoistureActivity extends AppCompatActivity {
 
     private Button btnWater;
     private CheckBox checkboxOne, checkboxTwo;
     private GraphView plotOne, plotTwo;
-    //SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moisture);
+        getSupportActionBar().hide();
         String serverURL = getIntent().getStringExtra("serverURL");
         initViews();
         plotGraphs(serverURL, plotOne, 1);
         plotGraphs(serverURL, plotTwo, 2);
-        configureAxis(plotOne);
-        configureAxis(plotTwo);
+        configureAxis(plotOne, 1);
+        configureAxis(plotTwo, 2);
 
         btnWater.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +77,7 @@ public class MoistureActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(MoistureActivity.this, "POST request failed", Toast.LENGTH_SHORT).show();
-                        Log.e("Error", "POST failed");
+                        Log.e("Error", "PUT failed");
                     }
                 });
                 queue.add(request);
@@ -127,6 +130,7 @@ public class MoistureActivity extends AppCompatActivity {
                     }
                     try {
                         timeData = formatter.parse(sTimeData);
+                        formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
                     } catch (ParseException ex) {
                         ex.printStackTrace();
                     }
@@ -137,10 +141,9 @@ public class MoistureActivity extends AppCompatActivity {
                 //Toast.makeText(MoistureActivity.this, timeData.toString(), Toast.LENGTH_SHORT).show();
                 PointsGraphSeries<DataPoint> pSeries = new PointsGraphSeries<DataPoint>(dataPoints);
                 LineGraphSeries<DataPoint> lSeries = new LineGraphSeries<>(dataPoints);
-
                 plotView.addSeries(pSeries);
                 plotView.addSeries(lSeries);
-                pSeries.setSize(10);
+                pSeries.setSize(10); //Determines the size of the dots
             }
         }, new Response.ErrorListener() {
             @Override
@@ -152,11 +155,15 @@ public class MoistureActivity extends AppCompatActivity {
         queue.add(request);
     }
 
-    private void configureAxis(GraphView plotView) {
+    private void configureAxis(GraphView plotView, int potNum) {
         GridLabelRenderer gridLabel = plotView.getGridLabelRenderer();
         gridLabel.setHorizontalAxisTitle("Time");
         gridLabel.setVerticalAxisTitle("Moisture");
-
+        plotView.setTitle("Pot " + potNum);
+        plotView.getGridLabelRenderer().setPadding(32);
+        plotView.getGridLabelRenderer().setNumHorizontalLabels(5);
+        //plotView.getViewport().setScalable(true);
+        //plotView.getViewport().setScrollable(true);
         plotView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
             @Override
             public String formatLabel(double value, boolean isValueX) {
