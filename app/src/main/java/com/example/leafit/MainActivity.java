@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         HashMap<Integer, ImageView> potsImgViews = initPotsImg();
 
         //Server URL
-        String serverURL = "https://a98c-172-58-227-36.ngrok.io";
+        String serverURL = "https://a0cb-107-77-208-161.ngrok.io";
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,29 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, MoistureActivity.class);
                 intent.putExtra("serverURL", serverURL);
                 startActivity(intent);
-//                Toast.makeText(MainActivity.this, "Analyze moisture level", Toast.LENGTH_SHORT).show();
-//// ...
-//// Instantiate the RequestQueue.
-//                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-//                String url = "https://7c5f2e13-b665-4ccb-97fc-70e59a216686.mock.pstmn.io/get";
-//// Request a string response from the provided URL.
-//                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-//                        new Response.Listener<String>() {
-//                            @Override
-//                            public void onResponse(String response) {
-//                                // Display the first 500 characters of the response string.
-//                                textView.setText("Response is: " + response.substring(0,500));
-//                            }
-//                        }, new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        textView.setText("That didn't work!");
-//                    }
-//                });
-//// Add the request to the RequestQueue.
-//                queue.add(stringRequest);
             }
         });
+
         emptyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

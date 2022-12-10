@@ -2,6 +2,7 @@ package com.example.leafit;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -105,12 +106,13 @@ public class MoistureActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
+                //If there's no data to be plotted, return
                 if (timestampList == null) {
                     return;
                 }
                 //Toast.makeText(MoistureActivity.this, timestampList.toString(), Toast.LENGTH_SHORT).show();
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 
                 DataPoint[] dataPoints = new DataPoint[timestampList.length()];
 
@@ -130,7 +132,6 @@ public class MoistureActivity extends AppCompatActivity {
                     }
                     try {
                         timeData = formatter.parse(sTimeData);
-                        formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
                     } catch (ParseException ex) {
                         ex.printStackTrace();
                     }
@@ -144,6 +145,7 @@ public class MoistureActivity extends AppCompatActivity {
                 plotView.addSeries(pSeries);
                 plotView.addSeries(lSeries);
                 pSeries.setSize(10); //Determines the size of the dots
+                //TODO: Set x axis range -> max: timeData + milliseconds, min: timeData - milliseconds
             }
         }, new Response.ErrorListener() {
             @Override
